@@ -1,0 +1,145 @@
+﻿#button-sticker {
+    background: url(https://i.imgur.com/VzyJif6.png) 50% no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+#button-sticker.loading {
+    background: url(https://i.imgur.com/JH5zFVY.gif) 50% no-repeat;
+};
+
+.hvStickerPackModalContainer {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+.hvStickerPackModal {
+    padding: 16px 16px 8px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    border: solid 1px #999;
+    border-radius: 4px;
+    background: #F4F5F6 url("http://i.imgur.com/akmlat3.png");
+    -webkit-box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    position: absolute;
+    display: none;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.hvStickerPackModal.active {
+    display: block;
+}
+
+.hvStickerPackModalTabs {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+}
+
+.hvStickerPackModalTab {
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: rgba(0,0,0,.12);
+    font-size: 12px;
+    font-family: Helvetica, Arial, sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    margin-right: 8px;
+}
+
+.hvStickerPackModalTab.active {
+    background: rgba(0,0,0,.20);
+}
+
+.hvStickerPackModalContent {
+    border: solid 1px #a9a6a6;
+    padding: 12px;
+    min-height: 70px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-height: 230px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.hvStickerPackModalContent img {
+    max-height: 80px;
+    cursor: pointer;
+}
+
+.hvStickerPackItem {
+    padding: 6px;
+    position: relative;
+}
+
+.hvStickerPackModalAdd {
+    margin-top: 8px;
+}
+
+.hvStickerPackModalAdd.hidden {
+    display: none;
+}
+
+.hvStickerPackModalInput {
+    padding: 4px 8px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    border-radius: 20px;
+    border: solid 1px #a9a6a6;
+    width: 200px;
+}
+
+.hvStickerPackModalAddButton {
+    font-size: 16px;
+    line-height: 20px;
+    border: 0;
+    margin-left: 8px;
+    border-radius: 40px;
+    background: rgba(0,0,0,.12);
+    cursor: pointer;
+}
+
+.hvStickerPackModalAddButton:hover {
+    background: rgba(0,0,0,.2);
+}
+
+.hvStickerPackRemoveItem {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    display: inline-block;
+    background: #d5d5d5;
+    z-index: 2;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    line-height: 14px;
+    width: 14px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.hvStickerPackRemoveItem:hover {
+    background: #bdbdbd;
+}
