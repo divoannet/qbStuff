@@ -1,4 +1,8 @@
-﻿$(document).ready(function () {
+﻿/**
+ * Позволяет пользователям отправлять друг друга в мьют
+ */
+
+$(document).ready(function () {
     if (location.pathname === '/profile.php' && location.search.includes('section=display')) {
         hideUserPostsInput();
     }

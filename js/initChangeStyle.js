@@ -6,10 +6,9 @@
 
 'use strict';
 
-// var hvStylesList = [
-// 	{ id: 'default', name: 'Меньшее Зло' },
-// 	{ id: 'sfw', name: 'Safe for work', path: 'http://forumfiles.ru/files/0018/22/0a/59867.css' }
-// ];
+var hvStylesList = [
+	{ id: 'default', name: 'По умолчанию' }
+];
 
 function initChangeStyle(hvStylesList) {
     var style = localStorage.getItem('hvStyleId') || 'default';

@@ -1,7 +1,7 @@
 /**
  * Возможность скопировать последний пост при переполнении темы
  *
- * status: NEED REFACTOR
+ * status: DONE
  */
 
 $('#pun-viewtopic #pun-main > h2').append('<div style="opacity: 0;position: absolute;bottom: 210px;right: 60px;width: 10px;height: 10px;"><textarea id="reserved_post">' + localStorage.ReservePost + '</textarea></div>');
