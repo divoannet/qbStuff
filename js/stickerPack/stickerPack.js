@@ -1,7 +1,7 @@
 ﻿/**
  * Скрипт стикеров
  * автор: Человек-Шаман
- * version: 1.0.1
+ * version: 1.0.2
  */
 
 var hvStickerPack = {
@@ -24,7 +24,7 @@ var hvStickerPack = {
   },
   addStyle: function() {
     var style = $(
-      '<link rel="stylesheet" href="http://forumstatic.ru/files/0019/37/10/94202.css">'
+      '<link rel="stylesheet" href="https://forumstatic.ru/files/0019/37/10/94202.css">'
     );
     $("head").append(style);
   },
@@ -88,14 +88,14 @@ var hvStickerPack = {
       typeof isOpened !== "undefined" ? Boolean(isOpened) : !this.isOpened;
 
     if (open) {
-      var offset = $("#post.container").offset();
+      var offset = $("#post").offset();
       this.modalContainer.css({
         position: "absolute",
         top: offset.top,
         left: offset.left
       });
       this.modal.css({
-        width: $("#post.container").width()
+        width: $("#post").width()
       });
 
       this.setTab(this.data[0].name);
@@ -186,7 +186,7 @@ var hvStickerPack = {
     }
 
     if (this.data.length) {
-      this.toggleModal(true);
+      this.toggleModal();
       return;
     }
 
