@@ -1,7 +1,10 @@
 ﻿/**
  * Скрипт стикеров
  * автор: Человек-Шаман
- * version: 1.0.2
+ * version: 1.0.3
+ * 
+ * Что нового:
+ * 1. До перезагрузки страницы открывается одна и та же вкладка 
  */
 
 var hvStickerPack = {
@@ -9,6 +12,7 @@ var hvStickerPack = {
   data: [],
   userData: [],
   isOpened: false,
+  activeTab: '',
   init: function(url, isAddingAvaliable) {
     if ($("#button-smile").length === 0) return;
     this.url = url;
@@ -98,7 +102,7 @@ var hvStickerPack = {
         width: $("#post").width()
       });
 
-      this.setTab(this.data[0].name);
+      this.setTab(this.activeTab);
       $(document).on("click", this.handleOutsideClick);
     } else {
       $(document).off("click", this.handleOutsideClick);
@@ -109,12 +113,13 @@ var hvStickerPack = {
   },
   setTab: function(tabName) {
     var self = this;
-    var isCustomTab = tabName === "Свои";
+    this.activeTab = tabName;
+    var isCustomTab = this.activeTab === "Свои";
     $(this.modalTabs)
       .find(".hvStickerPackModalTab")
       .removeClass("active");
     $(this.modalTabs)
-      .find('.hvStickerPackModalTab[data-pack="' + tabName + '"]')
+      .find('.hvStickerPackModalTab[data-pack="' + this.activeTab + '"]')
       .addClass("active");
 
     var pack = isCustomTab
@@ -123,7 +128,7 @@ var hvStickerPack = {
           stickers: this.userData
         }
       : this.data.find(function(pack) {
-          return pack.name === tabName;
+          return pack.name === self.activeTab;
         });
     $(self.modalContent).empty();
     pack.stickers.forEach(function(url) {
@@ -178,6 +183,7 @@ var hvStickerPack = {
         }
       }
     });
+    hvStickerPack.activeTab = hvStickerPack.data[0].name
   },
   handleTdClick: function(event) {
     event.stopPropagation();
