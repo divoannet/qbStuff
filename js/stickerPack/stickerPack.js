@@ -23,6 +23,7 @@ var hvStickerPack = {
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
     this.handleAddButtonClick = this.handleAddButtonClick.bind(this);
     this.handleContentClick = this.handleContentClick.bind(this);
+    this.closeModal = this.closeModal.bind(this);
     this.addStyle();
     this.addButton();
   },
@@ -87,6 +88,9 @@ var hvStickerPack = {
     $("body").append(this.modalContainer);
     this.toggleModal(true);
   },
+  closeModal: function() {
+    this.toggleModal(false);
+  },
   toggleModal: function(isOpened) {
     var open =
       typeof isOpened !== "undefined" ? Boolean(isOpened) : !this.isOpened;
@@ -104,7 +108,15 @@ var hvStickerPack = {
 
       this.setTab(this.activeTab);
       $(document).on("click", this.handleOutsideClick);
+      $(document).on("pun_post", this.closeModal);
+      $(document).on("pun_preview", this.closeModal);
+      $(document).on("pun_preedit", this.closeModal);
+      $(document).on("pun_edit", this.closeModal);
     } else {
+      $(document).off("pun_post", this.closeModal);
+      $(document).off("pun_preview", this.closeModal);
+      $(document).off("pun_preedit", this.closeModal);
+      $(document).off("pun_edit", this.closeModal);
       $(document).off("click", this.handleOutsideClick);
     }
 
