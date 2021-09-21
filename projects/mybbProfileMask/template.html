@@ -1,0 +1,100 @@
+<div class="additional-settings_box profile-mask-settings open">
+  <div
+    class="additional-settings_title"
+    onclick="$(this).parent().toggleClass('open');"
+  >
+    Скрипт маски профиля
+  </div>
+  <div class="additional-settings_content hidden">
+    <fieldset>
+      <div class="adfs-box">
+        <p>
+          <span class="adlabel">Включить скрипт</span>
+          <br>
+          <span class="adinput">
+          <input type="radio"
+                 name="profileMask[enabled]"
+                 value="1" checked="checked">&nbsp;
+          <label>Да</label>
+          &nbsp;&nbsp;&nbsp;
+          <input type="radio"
+                 name="profileMask[enabled]"
+                 value="0">&nbsp;
+          <label>Нет</label>
+          <br>
+          <em>Включить скрипт "Скрипт маски" для пользователей?</em>
+        </span>
+        </p>
+        <p>
+          <span class="adlabel">Лимит масок</span>
+          <br>
+          <span class="adinput">
+          <input type="number"
+                 name="profileMask[maskLimit]"
+                 value="20" min="0" max="100">
+          <br>
+          <em>Сколько масок запоминать?</em>
+        </span>
+        </p>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend><span>Дополнительные поля</span></legend>
+      <div class="adfs-box">
+        <p class="adsubmitfield">
+          <span class="adlabel">Добавить поле профиля</span><br>
+          <span class="adinput">
+            <select id="profileFldSelect" name="add_mask_field"></select><br>
+            <em>Добавить возможность подменять поле профиля</em>
+          </span>
+          <span class="adsubmit"><br>
+            <input type="button" class="button" id="addMaskFieldButton" name="add_mask_field_button" value=" Добавить ">
+          </span>
+        </p>
+      </div>
+      <div class="adfs-box" id="profileMaskFieldsList">
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend><span>Настройки форумов</span></legend>
+      <div class="adfs-box" id="profileMaskForumsSettings">
+      </div>
+    </fieldset>
+  </div>
+  <div class="modal maskFldSettingsModal">
+    <div class="overlay">
+      <div class="modal-inner inner">
+        <h3>Настройка поля <span id="profileMaskFldSettingsTitle">#</span></h3>
+        <form id="profileMaskFldSettings">
+          <div class="fldItem">
+            <label class="itemLabel">Название</label>
+            <input type="text" name="profileMask[fld][name]" value="">
+          </div>
+          <div class="fldItem">
+            <label class="itemLabel">Тэг</label>
+            <input name="profileMask[fld][tag]" type="text" value="">
+          </div>
+          <div class="fldItem">
+            <label class="itemLabel">Пояснение</label>
+            <input name="profileMask[fld][description]" type="text" value="">
+          </div>
+          <div class="fldItem">
+            <label class="itemLabel">Тип поля</label>
+            <label><input type="radio" name="profileMask[fld][type]" value="HTML"> HTML</label>
+            <label><input type="radio" name="profileMask[fld][type]" value="BBCode" checked> BBCode</label>
+            <label><input type="radio" name="profileMask[fld][type]" value="Text"> Текст</label>
+          </div>
+          <div class="fldItem">
+            <label class="itemLabel">Шаблон</label>
+            <div class="fieldTemplate">
+              <input type="text" value="123">
+              <textarea name="profileMask[fld][type]"></textarea>
+              <button class="profileMask_field_button add">+</button>
+              <button class="profileMask_field_button remove">-</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
