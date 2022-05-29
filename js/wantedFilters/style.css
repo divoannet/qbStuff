@@ -1,0 +1,40 @@
+﻿.topic.filtered .post {
+    display: none;
+}
+
+.topic.filtered .post.topicpost,
+.topic.filtered .post.filteredPost {
+    display: block;
+}
+
+.post.topicpost .charlist {
+    position: relative;
+    padding: 16px 12px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.post.topicpost .charlist ul {
+    padding: 8px 12px;
+    flex: 33% 0 0;
+    box-sizing: border-box;
+}
+
+.post.topicpost .charlist .charlist_item {
+    cursor: pointer;
+}
+
+.post.topicpost .charlist .hvClearFilters {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    cursor: pointer;
+    font-style: italic;
+    padding: 2px 4px;
+}
+
+.post.topicpost .charlist li.active {
+    background-color: #eee;
+    border-radius: 8px;
+    padding: 2px 4px;
+}
