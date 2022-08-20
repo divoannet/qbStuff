@@ -145,7 +145,7 @@
   },
   renderSummary: function() {
     const $charlist = $(".topicpost").find(".charlist");
-    const filteredFandomNames = Object.keys(this.fandoms).sort();
+    const filteredFandomNames = Object.keys(this.fandoms).sort((a, b) => a.localeCompare(b));
 
     
     $charlist.append('<span class="hvClearFilters">x Сбросить фильтр</span>');
@@ -156,7 +156,7 @@
       }
       const ul = $(`<ul class="charlist_fd fd${index}"></ul>`);
       ul.append(`<li class="charlist_item charlist_title" data-fandom="${fandom}">${this.fandoms[fandom].name}</li>`);
-      const sortedNames = this.fandoms[fandom].items.sort((a, b) => a.name > b.name ? 1 : -1);
+      const sortedNames = this.fandoms[fandom].items.sort((a, b) => a.name.localeCompare(b.name));
       sortedNames.forEach((char) => {
         if (!char.name) return;
         ul.append(
