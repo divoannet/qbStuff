@@ -7,10 +7,18 @@
  * status: DONE
  * 
  * instruction:
- * 1. Добавить в html-низ, заменить 999 на номер темы поиска
+ * 1. Добавить в html-низ, заменить 999, 998 на номера тем поиска
+ *    Скрипт будет запущен в каждой теме по отдельности
  *    <script>
- *      hvWantedFilters.init(999);
+ *      hvWantedFilters.init(999, 998, 997);
  *    </script>
+ * 1.1 Если хочется, чтобы в одной теме выводились заявки, собранные из нескольких тем,
+ *    вместо её номера нужно ввести массив [999, 998]
+ *    <script>
+ *      hvWantedFilters.init([999, 998], 997);
+ *    </script>
+ *    в этом примере в тему 999 выведутся заявки из неё и из темы 998
+ *    количество тем для сбора не ограничено.
  * 2. Добавить в первое сообщение темы поиска
  *    [block=charlist][/block]
  *    там, где нужно отрисовать список ролей
@@ -23,7 +31,8 @@
  *    .post .charlist .charlist_title { стили заголовка фандома }
   */
 
-const hvWantedFilters = {
+ const hvWantedFilters = {
+  hasRun: false,
   topicId: 0,
   topicData: {
     postCount: 0,
@@ -36,22 +45,37 @@ const hvWantedFilters = {
     fandom: null,
     post: null,
   },
-  init: function (topicId) {
-    $(document).on('pun_main_ready', () => this.run(topicId));
-  },
-  run: async function(topicId) {
+  init: function (...topicIds) {
     const $topic = $("#pun-viewtopic");
     const currentTopicId = $topic.length
       ? Number($("#pun-viewtopic").attr("data-topic-id"))
       : 0;
-  
-    if (topicId !== currentTopicId) return;
+    
+    topicIds.forEach(item => {
+      if (this.hasRun) return;
+      if (
+        (Array.isArray(item) && item[0] === currentTopicId)
+        || item === currentTopicId
+      ) {
+        $(document).on('pun_main_ready', () => this.run(item));
+        this.hasRun = true;
+      }
+    });
+  },
+  // topicId: number | number[]
+  run: async function(args) {
+    const topicIds = Array.isArray(args) ? args : [args];
+    const topicId = Array.isArray(args) ? args[0] : args;
     this.bindHandlers();
     this.setNeddfulElements();
-    
+
     this.topicId = topicId;
-    await this.getTopicData(topicId);
-    await this.getPosts(topicId);
+    for (let i = 0; i < topicIds.length; i++) {
+      const numReplies = await this.getTopicData(topicIds[i]);
+      await this.getPosts(topicIds[i], numReplies);
+    }
+    console.log('this.topicData.posts', this.topicData.posts);
+    this.getFandoms();
     this.renderSummary();
 
     this.initList();
@@ -69,28 +93,30 @@ const hvWantedFilters = {
       `/api.php?method=topic.get&topic_id=${topicId}`
     );
     const postCount = Number(topicData.response[0]?.num_replies);
-    this.topicData.postCount = isNaN(postCount) ? this.topicData.postCount : postCount;
+    return isNaN(postCount) ? this.topicData.postCount : postCount;
   },
-  getPosts: async function(topicId) {
-    const reqestCount = Math.ceil(this.topicData.postCount / 100);
+  getPosts: async function(topicId, numReplies) {
+    const reqestCount = Math.ceil(numReplies / 100);
     for (let i = 0; i < reqestCount; i++) {
       const { response } = await $.get(
         `/api.php?method=post.get&topic_id=${topicId}&skip=${i * 100}&limit=100`
       );
       this.topicData.posts = this.topicData.posts.concat(response);
     }
-    this.getFandoms();
   },
   getFandoms: function() {
-    this.topicData.posts.forEach((post) => {
+    this.topicData.posts.forEach((post, index) => {
       if (index === 0) return;
+
       const message = $(`<div>${post.message}</div>`);
       const $fandomName = message.find(".fd")[0];
       const $charNames = message.find(".nm");
   
-      const fandomName = $fandomName ? $($fandomName).text() : 'Other';
+      const fandomName = $fandomName ? $($fandomName).text().trim() : 'Other';
       const charNames = [];
-      $charNames.each((index, item) => charNames.push($(item).text()));
+      $charNames.each((index, item) => charNames.push($(item).text().trim()));
+
+      if (!charNames.length) return;
 
       if (!this.fandoms[fandomName.toLowerCase()]) {
         this.fandoms[fandomName.toLowerCase()] = {
@@ -175,10 +201,11 @@ const hvWantedFilters = {
   setFilters: function(fandom, post) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if (fandom) {
+
+    if (fandom && fandom !== this.filters.fandom) {
       urlParams.delete('post');
       urlParams.set('fandom', fandom);
-    } else if (post) {
+    } else if (post && post !== this.filters.post) {
       urlParams.delete('fandom');
       urlParams.set('post', post);
     } else {
