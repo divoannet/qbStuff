@@ -20,6 +20,14 @@
     box-sizing: border-box;
 }
 
+.post.topicpost .charlist .charlist_divider {
+    width: 100%;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 12px 0 8px;
+    display: none;
+}
+
 .post.topicpost .charlist .charlist_item {
     cursor: pointer;
 }

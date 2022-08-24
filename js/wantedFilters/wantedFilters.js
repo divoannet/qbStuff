@@ -3,7 +3,7 @@
  * Список даёт возможность фильтровать тему по фендому или по персонажу.
  *
  * author: Человек-Шаман
- * version: 1.2
+ * version: 1.3
  * status: DONE
  * 
  * instruction:
@@ -147,12 +147,17 @@
     const $charlist = $(".topicpost").find(".charlist");
     const filteredFandomNames = Object.keys(this.fandoms).sort((a, b) => a.localeCompare(b));
 
+    let activeLetter = '';
     
     $charlist.append('<span class="hvClearFilters">x Сбросить фильтр</span>');
 
     filteredFandomNames.forEach((fandom, index) => {
       if (fandom === 'other' && this.fandoms[fandom].items.length === 0) {
         return;
+      }
+      if (fandom[0].toLowerCase() !== activeLetter.toLowerCase()) {
+        $charlist.append(`<div class="charlist_divider">${fandom[0].toUpperCase()}</div>`);
+        activeLetter = fandom[0];
       }
       const ul = $(`<ul class="charlist_fd fd${index}"></ul>`);
       ul.append(`<li class="charlist_item charlist_title" data-fandom="${fandom}">${this.fandoms[fandom].name}</li>`);
