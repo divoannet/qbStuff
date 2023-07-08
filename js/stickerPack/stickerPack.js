@@ -1,19 +1,22 @@
 ﻿/**
  * Скрипт стикеров
  * автор: Человек-Шаман
- * version: 1.0.3
- * 
+ * version: 1.0.4
+ *
  * Что нового:
- * 1. До перезагрузки страницы открывается одна и та же вкладка 
+ * 1. Исправлен баг с парсингом некоторых текстовых файлов
+ * 2. Вкладка "Свои" больше не видна гостям
+ * 3. Модалка не блокируется, если не прогрузились форумные стикеры,
+ *    пользователи могут пользоваться своими сохранёнными
  */
-
-var hvStickerPack = {
+const hvStickerPack    = {
   loading: false,
   data: [],
   userData: [],
   isOpened: false,
   activeTab: '',
-  init: function(url, isAddingAvaliable) {
+
+  init: function (url) {
     if ($("#button-smile").length === 0) return;
     this.url = url;
     this.handleTdClick = this.handleTdClick.bind(this);
@@ -27,20 +30,18 @@ var hvStickerPack = {
     this.addStyle();
     this.addButton();
   },
-  addStyle: function() {
-    var style = $(
-      '<link rel="stylesheet" href="https://forumstatic.ru/files/0019/37/10/94202.css">'
-    );
+  addStyle: function () {
+    const style = $('<link rel="stylesheet" href="https://forumstatic.ru/files/0019/37/10/94202.css">');
     $("head").append(style);
   },
-  addButton: function() {
+  addButton: function () {
     this.button = $('<td title="Стикеры" id="button-sticker"></td>');
     this.button.on("click", this.handleTdClick);
 
-    var smile = $("#button-smile");
+    const smile = $("#button-smile");
     smile.after(this.button);
   },
-  renderModal: function() {
+  renderModal: function () {
     if (this.modal) {
       this.toggleModal(true);
       return;
@@ -65,21 +66,17 @@ var hvStickerPack = {
     this.modal.append(this.modalTabs);
     this.modalContainer.append(this.modal);
 
-    this.data.forEach(function(pack) {
+    this.data.forEach(pack => {
       if (pack.stickers.length === 0) {
         return;
       }
-      hvStickerPack.modalTabs.append(
-        '<div class="hvStickerPackModalTab" data-pack="' +
-          pack.name +
-          '">' +
-          pack.name +
-          "</div>"
-      );
+      hvStickerPack.modalTabs.append(`<div class="hvStickerPackModalTab" data-pack="${pack.name}">${pack.name}</div>`);
     });
-    hvStickerPack.modalTabs.append(
-      '<div class="hvStickerPackModalTab" data-pack="Свои">Свои</div>'
-    );
+    if (GroupID !== 3) {
+      hvStickerPack.modalTabs.append(
+        '<div class="hvStickerPackModalTab" data-pack="Свои">Свои</div>'
+      );
+    }
 
     this.modalTabs.on("click", this.handleTabsClick);
     this.modalContent.on("click", this.handleContentClick);
@@ -88,15 +85,14 @@ var hvStickerPack = {
     $("body").append(this.modalContainer);
     this.toggleModal(true);
   },
-  closeModal: function() {
+  closeModal: function () {
     this.toggleModal(false);
   },
-  toggleModal: function(isOpened) {
-    var open =
-      typeof isOpened !== "undefined" ? Boolean(isOpened) : !this.isOpened;
+  toggleModal: function (isOpened) {
+    const open = typeof isOpened !== "undefined" ? Boolean(isOpened) : !this.isOpened;
 
     if (open) {
-      var offset = $("#post").offset();
+      const offset = $("#post").offset();
       this.modalContainer.css({
         position: "absolute",
         top: offset.top,
@@ -123,58 +119,49 @@ var hvStickerPack = {
     this.modal.toggleClass("active", open);
     this.isOpened = open;
   },
-  setTab: function(tabName) {
-    var self = this;
+  setTab: function (tabName) {
+    const self = this;
     this.activeTab = tabName;
-    var isCustomTab = this.activeTab === "Свои";
+    const isCustomTab = this.activeTab === "Свои";
     $(this.modalTabs)
       .find(".hvStickerPackModalTab")
       .removeClass("active");
     $(this.modalTabs)
-      .find('.hvStickerPackModalTab[data-pack="' + this.activeTab + '"]')
+      .find(`.hvStickerPackModalTab[data-pack="${this.activeTab}"]`)
       .addClass("active");
 
-    var pack = isCustomTab
+    const pack = isCustomTab
       ? {
-          name: "Свои",
-          stickers: this.userData
-        }
-      : this.data.find(function(pack) {
-          return pack.name === self.activeTab;
-        });
+        name: "Свои",
+        stickers: this.userData
+      }
+      : this.data.find(pack => pack.name === self.activeTab);
     $(self.modalContent).empty();
-    pack.stickers.forEach(function(url) {
+    pack.stickers.forEach(url => {
+      const removeButton = isCustomTab
+        ? '<span class="hvStickerPackRemoveItem" title="Удалить">x</span>'
+        : '';
       $(self.modalContent).append(
-        '<div class="hvStickerPackItem" data-sticker="' +
-          url +
-          '"><img src="' +
-          url +
-          '" onClick="smile(\'[img]' +
-          url +
-          "[/img]')\">" +
-          (isCustomTab
-            ? '<span class="hvStickerPackRemoveItem" title="Удалить">x</span>'
-            : "") +
-          "</div>"
+        `<div class="hvStickerPackItem" data-sticker="${url}"><img src="${url}" onClick="smile('[img]${url}[/img]')">${removeButton}</div>`
       );
     });
     this.toggleAddTab(isCustomTab);
   },
-  toggleAddTab: function(isCustom) {
+  toggleAddTab: function (isCustom) {
     this.addContainer.toggleClass("hidden", !isCustom);
   },
-  setLoading: function(isLoading) {
+  setLoading: function (isLoading) {
     this.loading = Boolean(isLoading);
     this.button.toggleClass("loading", isLoading);
   },
-  parseLoadedData: function(data) {
-    var stickerArray = data.split("\n");
-    var pointer = 0;
-    var pointerName = "Pack 1";
+  parseLoadedData: function (data) {
+    const stickerArray = data.split(/\r?\n/);
+    let pointer = 0;
+    let pointerName = "Pack 1";
 
-    stickerArray.forEach(function(str) {
+    stickerArray.forEach(str => {
       str = str.replace(String.fromCharCode(13), '');
-      var isImg = /\.(gif|jpe?g|png)$/i.test(str);
+      const isImg = /\.(gif|jpe?g|png|webp)/i.test(str);
 
       if (isImg) {
         if (!hvStickerPack.data[pointer]) {
@@ -186,7 +173,7 @@ var hvStickerPack = {
         hvStickerPack.data[pointer].stickers.push(str);
       } else {
         if (str === "") {
-          pointerName = "Pack " + (hvStickerPack.data.length + 1);
+          pointerName = `Pack ${hvStickerPack.data.length + 1}`;
           if (hvStickerPack.data[pointer]) {
             pointer++;
           }
@@ -197,7 +184,7 @@ var hvStickerPack = {
     });
     hvStickerPack.activeTab = hvStickerPack.data[0].name
   },
-  handleTdClick: function(event) {
+  handleTdClick: function (event) {
     event.stopPropagation();
     if (this.loading) {
       return;
@@ -210,28 +197,30 @@ var hvStickerPack = {
 
     this.setLoading(true);
     this.loadForumStickers();
-    this.loadUserStickers();
+    if (GroupID !== 3) {
+      this.loadUserStickers();
+    }
   },
-  handleTabsClick: function(event) {
-    var target = $(event.target).closest(".hvStickerPackModalTab");
+  handleTabsClick: function (event) {
+    const target = $(event.target).closest(".hvStickerPackModalTab");
     if (target.length) {
       this.setTab(target.attr("data-pack"));
     }
   },
-  handleContentClick: function(event) {
+  handleContentClick: function (event) {
     event.stopPropagation();
-    var target = $(event.target).closest(".hvStickerPackRemoveItem");
+    const target = $(event.target).closest(".hvStickerPackRemoveItem");
     if (target.length) {
-      var link = target.closest(".hvStickerPackItem").attr("data-sticker");
-      var index = this.userData.indexOf(link);
+      const link = target.closest(".hvStickerPackItem").attr("data-sticker");
+      const index = this.userData.indexOf(link);
       this.userData.splice(index, 1);
       this.setTab("Свои");
       this.setUserData();
     }
   },
-  handleAddButtonClick: function() {
-    var link = $(this.stickerInput).val();
-    var isImg = /(^https?:\/\/.*\.(?:png|jpg|gif))$/.test(link);
+  handleAddButtonClick: function () {
+    const link = $(this.stickerInput).val();
+    const isImg = /(^https?:\/\/.*\.(?:png|jpg|gif))$/.test(link);
 
     if (isImg && !this.userData.includes(link)) {
       this.userData.push(link);
@@ -248,24 +237,22 @@ var hvStickerPack = {
       value: JSON.stringify(this.userData)
     });
   },
-  handleOutsideClick: function(event) {
+  handleOutsideClick: function (event) {
     var target = $(event.target);
     if (!target.closest(".hvStickerPackModal").length) {
       hvStickerPack.toggleModal(false);
     }
   },
-  loadForumStickers: function() {
-    $.get(this.url, function(data) {
+  loadForumStickers: function () {
+    $.get(this.url, data => {
       hvStickerPack.parseLoadedData(data);
       hvStickerPack.setLoading(false);
       hvStickerPack.renderModal();
-    }).fail(function() {
-      $.jGrowl(
-        "Стикеры не грузятся, что-то пошло не так 😔 Может, поможет перезагрузка страницы?"
-      );
+    }).fail(() => {
+      $.jGrowl("Стикеры не грузятся, что-то пошло не так 😔 Может, поможет перезагрузка страницы?");
     });
   },
-  loadUserStickers: function() {
+  loadUserStickers: function () {
     if (UserID === 1) {
       return;
     }
@@ -277,21 +264,15 @@ var hvStickerPack = {
         method: "storage.get",
         key: "hvStickerPack"
       },
-      success: function(result) {
-        var response =
-          result.response &&
-          result.response.storage &&
-          result.response.storage.data &&
-          result.response.storage.data.hvStickerPack;
+      success: result => {
+        const response = result.response?.storage?.data?.hvStickerPack || '';
 
         if (response) {
           hvStickerPack.userData = JSON.parse(response);
         }
       },
-      error: function() {
-        $.jGrowl(
-          "Твои стикеры не прогрузились, придется пользоваться форумными 😒"
-        );
+      error: () => {
+        $.jGrowl("Твои стикеры не прогрузились, придется пользоваться форумными 😒");
       }
     });
   }
