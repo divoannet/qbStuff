@@ -230,12 +230,23 @@ const hvStickerPack    = {
     }
   },
   setUserData() {
+    const value = this.checkedUserData(this.userData);
     $.post("/api.php", {
       method: "storage.set",
       token: ForumAPITicket,
       key: "hvStickerPack",
-      value: JSON.stringify(this.userData)
+      value,
     });
+  },
+  checkedUserData(userData) {
+    const string = JSON.stringify(userData);
+    if (string.length >= 500) {
+      $.jGrowl("Слишком много стикеров, последний не был сохранён 😔");
+      userData.pop();
+      return this.checkedUserData(userData)
+    } else {
+      return string;
+    }
   },
   handleOutsideClick: function (event) {
     var target = $(event.target);
