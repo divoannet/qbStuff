@@ -3,14 +3,22 @@
  * Список даёт возможность фильтровать тему по фендому или по персонажу.
  *
  * author: Человек-Шаман
- * version: 1.1
+ * version: 1.4
  * status: DONE
- * 
+ *
  * instruction:
- * 1. Добавить в html-низ, заменить 999 на номер темы поиска
+ * 1. Добавить в html-низ, заменить 999, 998 на номера тем поиска
+ *    Скрипт будет запущен в каждой теме по отдельности
  *    <script>
- *      hvWantedFilters.init(999);
+ *      hvWantedFilters.init(999, 998, 997);
  *    </script>
+ * 1.1 Если хочется, чтобы в одной теме выводились заявки, собранные из нескольких тем,
+ *    вместо её номера нужно ввести массив [999, 998]
+ *    <script>
+ *      hvWantedFilters.init([999, 998], 997);
+ *    </script>
+ *    в этом примере в тему 999 выведутся заявки из неё и из темы 998
+ *    количество тем для сбора не ограничено.
  * 2. Добавить в первое сообщение темы поиска
  *    [block=charlist][/block]
  *    там, где нужно отрисовать список ролей
@@ -21,9 +29,10 @@
  *    .post .charlist .charlist_fd { стили блока фандома }
  *    .post .charlist .charlist_item { стили элемента списка фандома }
  *    .post .charlist .charlist_title { стили заголовка фандома }
-  */
+ */
 
 const hvWantedFilters = {
+  hasRun: false,
   topicId: 0,
   topicData: {
     postCount: 0,
@@ -36,22 +45,41 @@ const hvWantedFilters = {
     fandom: null,
     post: null,
   },
-  init: function (topicId) {
-    $(document).on('pun_main_ready', () => this.run(topicId));
+  callbacks: [],
+  callback: function (fn) {
+    this.callbacks.push(fn);
   },
-  run: async function(topicId) {
+  init: function (...topicIds) {
     const $topic = $("#pun-viewtopic");
     const currentTopicId = $topic.length
       ? Number($("#pun-viewtopic").attr("data-topic-id"))
       : 0;
-  
-    if (topicId !== currentTopicId) return;
+
+    topicIds.forEach(item => {
+      if (this.hasRun) return;
+      if (
+        (Array.isArray(item) && item[0] === currentTopicId)
+        || item === currentTopicId
+      ) {
+        $(document).on('pun_main_ready', () => this.run(item));
+        this.hasRun = true;
+      }
+    });
+  },
+  // topicId: number | number[]
+  run: async function(args) {
+    const topicIds = Array.isArray(args) ? args : [args];
+    const topicId = Array.isArray(args) ? args[0] : args;
     this.bindHandlers();
     this.setNeddfulElements();
-    
+
     this.topicId = topicId;
-    await this.getTopicData(topicId);
-    await this.getPosts(topicId);
+    for (let i = 0; i < topicIds.length; i++) {
+      const numReplies = await this.getTopicData(topicIds[i]);
+      await this.getPosts(topicIds[i], numReplies);
+    }
+
+    this.getFandoms();
     this.renderSummary();
 
     this.initList();
@@ -69,28 +97,30 @@ const hvWantedFilters = {
       `/api.php?method=topic.get&topic_id=${topicId}`
     );
     const postCount = Number(topicData.response[0]?.num_replies);
-    this.topicData.postCount = isNaN(postCount) ? this.topicData.postCount : postCount;
+    return isNaN(postCount) ? this.topicData.postCount : postCount;
   },
-  getPosts: async function(topicId) {
-    const reqestCount = Math.ceil(this.topicData.postCount / 100);
+  getPosts: async function(topicId, numReplies) {
+    const reqestCount = Math.ceil(numReplies / 100);
     for (let i = 0; i < reqestCount; i++) {
       const { response } = await $.get(
         `/api.php?method=post.get&topic_id=${topicId}&skip=${i * 100}&limit=100`
       );
       this.topicData.posts = this.topicData.posts.concat(response);
     }
-    this.getFandoms();
   },
   getFandoms: function() {
-    this.topicData.posts.forEach((post) => {
+    this.topicData.posts.forEach((post, index) => {
       if (index === 0) return;
+
       const message = $(`<div>${post.message}</div>`);
       const $fandomName = message.find(".fd")[0];
       const $charNames = message.find(".nm");
-  
-      const fandomName = $fandomName ? $($fandomName).text() : 'Other';
+
+      const fandomName = $fandomName ? $($fandomName).text().trim() : 'Other';
       const charNames = [];
-      $charNames.each((index, item) => charNames.push($(item).text()));
+      $charNames.each((index, item) => charNames.push($(item).text().trim()));
+
+      if (!charNames.length) return;
 
       if (!this.fandoms[fandomName.toLowerCase()]) {
         this.fandoms[fandomName.toLowerCase()] = {
@@ -119,18 +149,23 @@ const hvWantedFilters = {
   },
   renderSummary: function() {
     const $charlist = $(".topicpost").find(".charlist");
-    const filteredFandomNames = Object.keys(this.fandoms).sort();
+    const filteredFandomNames = Object.keys(this.fandoms).sort((a, b) => a.localeCompare(b));
 
-    
+    let activeLetter = '';
+
     $charlist.append('<span class="hvClearFilters">x Сбросить фильтр</span>');
 
     filteredFandomNames.forEach((fandom, index) => {
       if (fandom === 'other' && this.fandoms[fandom].items.length === 0) {
         return;
       }
+      if (fandom[0].toLowerCase() !== activeLetter.toLowerCase()) {
+        $charlist.append(`<div class="charlist_divider">${fandom[0].toUpperCase()}</div>`);
+        activeLetter = fandom[0];
+      }
       const ul = $(`<ul class="charlist_fd fd${index}"></ul>`);
       ul.append(`<li class="charlist_item charlist_title" data-fandom="${fandom}">${this.fandoms[fandom].name}</li>`);
-      const sortedNames = this.fandoms[fandom].items.sort((a, b) => a.name > b.name ? 1 : -1);
+      const sortedNames = this.fandoms[fandom].items.sort((a, b) => a.name.localeCompare(b.name));
       sortedNames.forEach((char) => {
         if (!char.name) return;
         ul.append(
@@ -146,7 +181,7 @@ const hvWantedFilters = {
     const $target = $(event.target);
     if ($target.closest('a').length) {
       event.preventDefault();
-    } 
+    }
     if ($target.closest('li').length) {
       const fandom = $target.closest('li').attr('data-fandom');
       const post = $target.closest('li').attr('data-character');
@@ -175,12 +210,15 @@ const hvWantedFilters = {
   setFilters: function(fandom, post) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if (fandom) {
+
+    if (fandom && fandom !== this.filters.fandom) {
       urlParams.delete('post');
       urlParams.set('fandom', fandom);
-    } else if (post) {
+      this.scrollToList();
+    } else if (post && post !== this.filters.post) {
       urlParams.delete('fandom');
       urlParams.set('post', post);
+      this.scrollToList();
     } else {
       urlParams.delete('fandom');
       urlParams.delete('post');
@@ -188,6 +226,11 @@ const hvWantedFilters = {
 
     window.history.replaceState( {} , 'title', window.location.pathname + '?' + urlParams.toLocaleString() );
     this.initList();
+  },
+  scrollToList() {
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $(this.filterList).offset().top
+    }, 500);
   },
   filterPosts: function() {
     if (this.filters.fandom) {
@@ -216,6 +259,15 @@ const hvWantedFilters = {
 			</ul></div><div class="post-body"><div class="post-box"><div class="post-content">
         ${post.message}
       </div></div></div></div>`);
-    })
+    });
+    if (this.filteredPosts.length) {
+      this.callbackScripts();
+    }
   },
+  callbackScripts: function () {
+    this.callbacks.forEach(fn => {
+      if (typeof fn !== 'function') return;
+      fn(this.filterList);
+    })
+  }
 };
