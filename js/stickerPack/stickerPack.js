@@ -6,7 +6,7 @@
  * Что нового:
  * 1. Появилась защита от переполнения хранилища
  */
-const hvStickerPack    = {
+const hvStickerPack = {
   loading: false,
   data: [],
   userData: [],
@@ -237,7 +237,7 @@ const hvStickerPack    = {
   },
   checkedUserData(userData) {
     const string = JSON.stringify(userData);
-    if (string.length >= 500) {
+    if (string.length >= 65000) {
       $.jGrowl("Слишком много стикеров, последний не был сохранён 😔");
       userData.pop();
       return this.checkedUserData(userData)
@@ -276,7 +276,14 @@ const hvStickerPack    = {
         const response = result.response?.storage?.data?.hvStickerPack || '';
 
         if (response) {
-          hvStickerPack.userData = JSON.parse(response);
+          try {
+            hvStickerPack.userData = JSON.parse(response);
+          } catch (err) {
+            if (err.name === 'SyntaxError' && response.length > 65000) {
+              this.setUserData();
+              $.jGrowl("Стикеры сохранились критично неправильно, мне пришлось очистить хранилище. Очень извиняюсь 😥");
+            }
+          }
         }
       },
       error: () => {
