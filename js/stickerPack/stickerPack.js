@@ -5,6 +5,7 @@
  *
  * Что нового:
  * 1. Появилась защита от переполнения хранилища
+ * 2. Скрипт теперь поддерживает стикеры формата webp
  */
 const hvStickerPack = {
   loading: false,
@@ -217,7 +218,7 @@ const hvStickerPack = {
   },
   handleAddButtonClick: function () {
     const link = $(this.stickerInput).val();
-    const isImg = /(^https?:\/\/.*\.(?:png|jpg|gif))$/.test(link);
+    const isImg = /(^https?:\/\/.*\.(?:png|jpg|gif|webp))$/.test(link);
 
     if (isImg && !this.userData.includes(link)) {
       this.userData.push(link);
