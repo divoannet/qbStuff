@@ -111,25 +111,34 @@ var evidence = {
 };
 
 function changeOnline() {
-	$('#pun-online').find('td[style]').each(function() {
-		var link = this.querySelector('a');
+	if (location.pathname !== '/online.php') return;
+	$('h1 span').html('Страничка каверзных истин');
+	$('#pun-main').find('tbody tr').each(function () {
+		var action = $(this).find('.action');
+		var link = this.querySelector('.action a');
+		if (!link) {
+			$(this).html('Странный какой-то, ну его');
+		}
+		var nick = this.querySelector('.username');
+		var nickStr = nick.innerText ? nick.innerText : '';
+		var nickInt = nickStr.charCodeAt(0) + nickStr.charCodeAt(1);
+		var tc3 = this.querySelector('.tc3');
+		var tc3Str = tc3 ? tc3.innerText.replace(/[^0-9]/g, '') : '';
+		var summ = nickInt + parseInt(tc3Str);
+		var index = summ % evidence[link.pathname].length;
 		switch (link.pathname) {
 			case '/':
 			case '/online.php':
 			case '/search.php':
 			case '/messages.php':
-				$(link).text(evidence[link.pathname][randomInteger(0,evidence[link.pathname].length-1)]);
+				$(link).text(evidence[link.pathname][index]);
 				break;
 			case '/viewforum.php':
 			case '/viewtopic.php':
 			case '/profile.php':
-				$(this).html(evidence[link.pathname][randomInteger(0,evidence[link.pathname].length-1)] + ': <b>' + link.outerHTML + '</b>');
+				$(action).html(evidence[link.pathname][index] + ': <b>' + link.outerHTML + '</b>');
 		}
 	});
 }
 
-function randomInteger(min, max) {
-	var rand = min + Math.random() * (max + 1 - min);
-	rand = Math.floor(rand);
-	return rand;
-}
+setTimeout(changeOnline, 0);
