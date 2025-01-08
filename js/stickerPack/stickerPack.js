@@ -1,11 +1,10 @@
 ﻿/**
  * Скрипт стикеров
  * автор: Человек-Шаман
- * version: 1.0.5
+ * version: 1.0.6
  *
  * Что нового:
- * 1. Появилась защита от переполнения хранилища
- * 2. Скрипт теперь поддерживает стикеры формата webp
+ * 1. Поддержка скрипта мессенджера от Alex_63
  */
 const hvStickerPack = {
   loading: false,
@@ -90,7 +89,7 @@ const hvStickerPack = {
     const open = typeof isOpened !== "undefined" ? Boolean(isOpened) : !this.isOpened;
 
     if (open) {
-      const offset = $("#post").offset();
+      const offset = $("#post").offset() || $("#post-form").offset();
       this.modalContainer.css({
         position: "absolute",
         top: offset.top,
@@ -106,11 +105,13 @@ const hvStickerPack = {
       $(document).on("pun_preview", this.closeModal);
       $(document).on("pun_preedit", this.closeModal);
       $(document).on("pun_edit", this.closeModal);
+      $(document).on("messenger:post", this.closeModal);
     } else {
       $(document).off("pun_post", this.closeModal);
       $(document).off("pun_preview", this.closeModal);
       $(document).off("pun_preedit", this.closeModal);
       $(document).off("pun_edit", this.closeModal);
+      $(document).off("messenger:post", this.closeModal);
       $(document).off("click", this.handleOutsideClick);
     }
 
