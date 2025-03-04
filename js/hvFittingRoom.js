@@ -1,4 +1,17 @@
-﻿function hvFittingRoom ({
+﻿/**
+ * Скрипт примерочной для личного звания
+ * автор: Человек-Шаман
+ * version: 1.0.1
+ *
+ * Инструкция:
+ * 1. В первое сообщение нужной темы в нужном месте добавить код [block=fittingRoom][/block]
+ * 2. В скрипте ниже в переменной topicId указать номер темы
+ * 3. В переменной fields указать поля для примерочной в формате: { title: 'Название поля', className: 'класс поля в профиле', template: 'шаблон' }
+ * 4. В переменной order указать порядок полей в профиле, до нужного
+ * 5. Можно вызывать скрипт в нескольких темах, каждый со своими настройками
+ */
+
+function hvFittingRoom ({
   topicId,
   fields = [],
   order = [],
@@ -26,7 +39,10 @@
   const renderField = ({ title, className, template }) => {
     return `
       <div class="hvFittingRoom-field hvFittingRoom-field_${className}" data-field="${className}">
-        <div class="hvFittingRoom-field-input"><textarea id="hvFr-${className}"} name="fitting-room-${className}" placeholder="${title}" rows="2"></textarea></div>
+        <div class="hvFittingRoom-field-input">
+          <textarea id="hvFr-${className}"} name="fitting-room-${className}" placeholder="${title}" rows="2"></textarea>
+          <span class="hvFittingRoom-field-caption error"></span>
+        </div>
         <div class="hvFittingRoom-field-actions ${template ? '' : 'hidden'}">
           <input type="button" class="hvFittingRoom-field-action hvFittingRoom-field-action_add-temp button" title="Вставить шаблон" value="«"/>
         </div>
@@ -57,7 +73,12 @@
     });
   }
 
-  const sign = postContent.querySelector('.post-sig');
+  function validateHTML(htmlString){
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(htmlString, "application/xml");
+    let errorNode = doc.querySelector('parsererror');
+    return !errorNode;
+  }
 
   const roomBox = document.createElement('div');
   roomBox.classList.add('fittingroom');
@@ -100,6 +121,12 @@
       const fields = wrapper.querySelectorAll('.hvFittingRoom-field');
       const values = Array.from(fields).reduce((acc, field) => {
         const textarea = field.querySelector('textarea');
+        const isValid = validateHTML(textarea.value);
+        if (!isValid) {
+          field.querySelector('.hvFittingRoom-field-caption').innerHTML = 'Неверный HTML';
+          return acc;
+        }
+        field.querySelector('.hvFittingRoom-field-caption').innerHTML = '';
         acc[field.dataset.field] = textarea.value;
         return acc;
       }, {});
