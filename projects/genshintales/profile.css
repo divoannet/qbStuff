@@ -1,0 +1,237 @@
+#pf_dialog.hidden {
+  display: none;
+}
+
+#pf_dialog .pf_bg {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .4);
+  cursor: pointer;
+}
+
+#pf_dialog .inner {
+  cursor: default;
+  margin: 0;
+  width: 826px;
+  max-width: 99%;
+  max-height: 50%;
+  z-index: 100;
+  padding: 8px 16px 8px 25px;
+  background: url(https://forumstatic.ru/files/001c/5f/a0/39597.png) top center repeat-y;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+#pf_dialog .inner:before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: url(https://forumstatic.ru/files/001c/5f/a0/22429.png) top center no-repeat;
+}
+
+#pf_dialog .inner:after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: url(https://forumstatic.ru/files/001c/5f/a0/82000.png) bottom center no-repeat;
+}
+
+#pf_dialog h2 {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+#pf_dialog .pf_profile {
+  flex: 0 0 363px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  justify-content: space-between;
+  padding: 0;
+  margin: -29px 0 -32px;
+  position: relative;
+  z-index: 1;
+}
+
+#pf_dialog .pf_banner {
+  height: 170px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #00000011;
+  background-position: 50%;
+  background-size: cover;
+}
+
+#pf_dialog .pf_banner:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background: url(https://forumstatic.ru/files/001c/5f/a0/32660.png) -4px -4px no-repeat;
+  background-size: 372px;
+  opacity: .5;
+  pointer-events: none;
+}
+
+#pf_dialog .pf_edit_link {
+  display: none;
+}
+
+#pf_dialog .pf_edit_link:not([href=""]) {
+  display: block;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: url('https://forumupload.ru/uploads/001b/5c/7f/124/860651.png') 50% no-repeat;
+  background-size: contain;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#pf_dialog .pf_avatar {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #ffffff66;
+  background-position: 50%;
+  background-size: cover;
+}
+
+#pf_dialog .pf_quicklinks {
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  height: 20px;
+}
+
+#pf_dialog .pf_quicklinks a {
+  display: block;
+  background: #ffffff33;
+  border-radius: 4px;
+}
+
+#pf_dialog .pf_quicklinks img {
+  height: 20px;
+  max-width: 40px;
+}
+
+#pf_dialog .pf_info {
+  padding: 8px;
+  margin: 16px;
+  min-height: 120px;
+  font-size: 12px;
+  font-weight: 100;
+  border: solid 2px #e5ddd2;
+  font-family: 'Genshin', Helvetica, Arial, sans-serif;
+  flex: 1 1 60px;
+  overflow: auto;
+}
+
+#pf_dialog .pf_charlist {
+  margin: 0;
+}
+
+.pf_charlist > ul {
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 100%;
+  max-width: 100%;
+  padding: 4px 12px 12px !important;
+  flex: 0 0 24px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+#pf_dialog .pf_charlist.empty {
+  display: none;
+}
+
+#pf_dialog .pf_charlist:before {
+  content: 'Твинки:';
+  display: block;
+  text-align: center;
+  font-family: 'Genshin', serif;
+  font-size: 14px;
+}
+
+#pf_dialog .pf_charlist li {
+  flex: 0 1 1%;
+  white-space: nowrap;
+  box-sizing: border-box;
+  position: relative;
+  list-style: none;
+}
+
+#pf_dialog .pf_charlist li + li:before {
+  content: "|";
+  position: absolute;
+  left: -8px;
+  font-size: 14px;
+  line-height: 13px;
+  color: #c0b09b;
+}
+
+#pf_dialog .pf_charlist li p {
+  text-align: center;
+}
+
+#pf_dialog .pf_right {
+  flex: 0 0 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+#pf_dialog .pf_right h2 {
+  background: url(https://forumstatic.ru/files/001c/5f/a0/59431.png) 50% no-repeat;
+  line-height: 34px;
+  font-size: 14px;
+  font-family: 'Genshin', serif;
+  margin-top: -8px;
+}
+
+#pf_dialog .pf_achievements {
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  gap: 12px;
+  justify-content: center;
+  align-items: start;
+}
+
+#pf_dialog .pf_achievements a {
+  overflow: hidden;
+  display: block;
+  border-radius: 8px;
+  font-size: 0;
+}

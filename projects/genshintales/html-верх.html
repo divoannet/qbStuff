@@ -1,0 +1,137 @@
+<div class="GenshinLogo">
+  <a href="https://genshintales.ru/"><img src="https://forumupload.ru/uploads/001b/f1/af/2/902507.png"
+                                          alt="На главную" title="На главную"></a>
+</div>
+
+<ul class="game-navigation">
+  <li><a href="https://genshintales.ru/viewtopic.php?id=78">Сюжет</a></li>
+  <li><a href="https://genshintales.ru/viewtopic.php?id=1399">Хронология</a></li>
+  <li><a href="https://genshintales.ru/viewtopic.php?id=5">Роли</a></li>
+  <li><a href="https://genshintales.ru/viewtopic.php?id=93">FAQ</a></li>
+  <li><a href="https://genshintales.ru/viewtopic.php?id=17">Правила</a></li>
+  <li><a href="https://genshintales.ru/viewtopic.php?id=7">Ждём в игру</a></li>
+</ul>
+
+<!-- СКРИПТЫ -->
+
+<!-- Быстроплюсы v.2 by Deff -->
+<script type="text/javascript" src="https://forumstatic.ru/files/0012/d8/04/58219.js" addComment="0"></script>
+
+<!-- Пиар и читатель -->
+<script src="https://forumstatic.ru/files/0015/c4/3f/26781.js"></script>
+<script type="text/javascript">
+  PR.nick = 'PR-agent';
+  PR.pass = '1111';
+  PR.btn_text = 'PR-вход';
+  PR.set();
+</script>
+
+<!--Скрытие профиля в теме тегом-->
+<script>
+  FORUM.set('editor.addition.tags.hideprofile', {
+    name: 'Скрыть минипрофиль', onclick: function () {
+      insert('[hideprofile]');
+    }
+  });
+  $().pun_mainReady(function () {
+    $('.post:contains("[hideprofile]")').addClass('hideprofile').html(function () {
+      return $(this).html().replace(/\[hideprofile\]/gim, '')
+    })
+  });
+</script>
+<style>
+  .hideprofile .post-author, .hideprofile .pl-email, .hideprofile .pl-website {
+    display: none !important
+  }
+
+  .hideprofile .post-body, .hideprofile .post-links, .hideprofile .post-links ul, .post.hideprofile h3 > span {
+    margin-left: 0 !important
+  }
+</style>
+
+<!-- Шрифты -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');
+  @import url('https://fonts.googleapis.com/css?family=Arsenal:400,700&subset=cyrillic');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Prata&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Comforter&family=Festive&family=Marck+Script&family=Parisienne&display=swap');
+  @import url('https://fonts.googleapis.com/css?family=Playfair+Display+SC');
+  @import url('https://fonts.googleapis.com/css2?family=Amatic+SC&family=Bad+Script&family=Bellota:wght@300&family=Caveat&family=El+Messiri&family=Kurale&family=Lobster&family=Marck+Script&family=Pacifico&family=Pattaya&family=Rampart+One&family=Reggae+One&family=Rubik+Beastly&family=Train+One&family=Yeseva+One&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Pattaya&family=Playfair+Display+SC&display=swap');
+</style>
+
+<!--Выделение кода в блоке "Код" с перемещение в буфер обмена // © Damassk, версия 2019г. -->
+<script type="text/javascript" src="https://forumstatic.ru/files/0016/4a/bf/98029.js"></script>
+<script>eval(select_text.toString().replace(/\}$/, 'try{document.execCommand("copy")}catch(e){}}'))</script>
+<script type="text/javascript">select_text.linkText = 'выделить [копируется сразу]' //текст ссылки</script>
+<!-- конец -->
+
+<!-- Rusff настройки -->
+<script>
+  RusffCore.sets.show_reportBtn = 0; // кнопка жалобы
+  RusffCore.sets.share = false; // кнопка поделиться
+  rusffLive.enable = false; // rusff live
+</script>
+
+<!-- Пин менюшки -->
+<script>
+  $(document).ready(function () {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const className = isMobile ? 'mobilePinned' : 'isPinned';
+
+    const ulinks = document.querySelector('#pun-ulinks');
+    const navlinks = document.querySelector('#pun-navlinks');
+
+    const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle(className, e.intersectionRatio < 1),
+            {threshold: [1]}
+    );
+    if (!isMobile) {
+      observer.observe(ulinks);
+    }
+    if (isMobile) {
+      observer.observe(navlinks);
+    }
+
+  })
+</script>
+
+<!---------------------------- Быстрая смена аккаунта  ---------------------------->
+<script type="text/javascript">
+  New_EXiT = "https://forumupload.ru/uploads/001b/92/1c/2/137504.png"; //Дополнительная Иконка выход;
+</script>
+<script data="3496a3" src="https://forumstatic.ru/files/0014/cc/0a/93129.js"></script>
+
+<!-- Отмена мобильного стиля //-->
+<script>
+  (function changeMobileView() {
+    var mobileStyleDenied = +localStorage.getItem("mobileStyleDenied") || 0;
+    if (mobileStyleDenied) {
+      $('meta[name="viewport"]').attr("content", "width=1024");
+      $('link[href="https://forumstatic.ru/style/mobile.6.css"]').remove();
+    }
+
+    if (
+            location.pathname === "/profile.php" &&
+            location.search.includes("section=display")
+    ) {
+      $(document).ready(function () {
+        initProfileSelect();
+      });
+    }
+
+    function initProfileSelect() {
+      $($("#profile6").find(".fs-box")[0]).append(
+              '<p class="checkfield"><input type="checkbox" id="fldMob" name="mobile_view_deny" value="0"><label for="fldMob">Запретить мобильную версию.</label></p>'
+      );
+      if (mobileStyleDenied) {
+        $("#fldMob").attr('checked', 'checked');
+      }
+      $("#fldMob").on("change", function (event) {
+        var value = event.target.checked;
+        localStorage.setItem("mobileStyleDenied", value ? '1' : '0');
+      });
+    }
+  })();
+</script>
