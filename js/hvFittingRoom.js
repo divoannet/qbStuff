@@ -51,7 +51,10 @@ function hvFittingRoom ({
   };
 
   const fillExample = (values = {}) => {
-    postProfile.querySelector('.pa-avatar img[title]').src = UserAvatar;
+    const avatar = postProfile.querySelector('.pa-avatar img');
+    if (avatar) {
+      avatar.src = UserAvatar;
+    }
     Object.entries(values).forEach(([key, value]) => {
       let field = postProfile.querySelector(`.${key}`);
       if (!field) {
@@ -73,11 +76,10 @@ function hvFittingRoom ({
     });
   }
 
-  function validateHTML(htmlString){
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(htmlString, "application/xml");
-    let errorNode = doc.querySelector('parsererror');
-    return !errorNode;
+  function validateHTML(htmlString) {
+    const doc = document.createElement('div');
+    doc.innerHTML = htmlString;
+    return doc.innerHTML === htmlString;
   }
 
   const roomBox = document.createElement('div');
@@ -103,7 +105,8 @@ function hvFittingRoom ({
   .hvFittingRoom-field-input textarea { width: 100%; box-sizing: border-box; }
   .hvFittingRoom-field-actions { flex: 0 0 24px; }
   .hvFittingRoom-field-actions.hidden { display: none; }
-  .hvFittingRoom-actions { text-align: center; padding: 8px;}`;
+  .hvFittingRoom-actions { text-align: center; padding: 8px;}
+  .hvFittingRoom-field-caption.error {font-size: 0.7em;line-height: 0.7em;color: #ac0000;}`;
 
   wrapper.appendChild(roomBox);
   document.head.appendChild(style);
