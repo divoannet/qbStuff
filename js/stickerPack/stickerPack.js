@@ -1,10 +1,10 @@
 ﻿/**
  * Скрипт стикеров
  * автор: Человек-Шаман
- * version: 1.0.6
+ * version: 1.0.7
  *
  * Что нового:
- * 1. Поддержка скрипта мессенджера от Alex_63
+ * 1. Фикс адресов сохранённых стикеров с forumupload.ru на upforme.ru
  */
 const hvStickerPack = {
   loading: false,
@@ -89,14 +89,14 @@ const hvStickerPack = {
     const open = typeof isOpened !== "undefined" ? Boolean(isOpened) : !this.isOpened;
 
     if (open) {
-      const offset = $("#post").offset() || $("#post-form").offset();
+      const offset = $("#main-reply").offset() || $("#post-form").offset();
       this.modalContainer.css({
         position: "absolute",
         top: offset.top,
         left: offset.left
       });
       this.modal.css({
-        width: $("#post").width()
+        width: $("#main-reply").width() || $("#post-form").width(),
       });
 
       this.setTab(this.activeTab);
@@ -159,7 +159,10 @@ const hvStickerPack = {
     let pointerName = "Pack 1";
 
     stickerArray.forEach(str => {
-      str = str.replace(String.fromCharCode(13), '');
+      str = str
+        .replace(String.fromCharCode(13), '')
+        // в 2025 году внутренний хостинг файлов mybb сменился, фикс автоматически заменяет ссылки
+        .replace(/^https?:\/\/forumupload.ru\//, 'https://upforme.ru/');
       const isImg = /\.(gif|jpe?g|png|webp)/i.test(str);
 
       if (isImg) {
@@ -279,7 +282,10 @@ const hvStickerPack = {
 
         if (response) {
           try {
-            hvStickerPack.userData = JSON.parse(response);
+            const userData = JSON.parse(response);
+            // в 2025 году внутренний хостинг файлов mybb сменился, фикс автоматически заменяет ссылки
+            const clearedData = userData.map(item => item.replace(/^https?:\/\/forumupload.ru\//, 'https://upforme.ru/'));
+            hvStickerPack.userData = clearedData;
           } catch (err) {
             if (err.name === 'SyntaxError' && response.length > 65000) {
               this.setUserData();
